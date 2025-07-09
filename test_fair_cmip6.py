@@ -126,12 +126,13 @@ natural_forcing = np.column_stack((np.array(f.forcing.loc[dict(scenario='ssp245'
 
 
 plt.figure(layout='constrained')
-
+label_col_ghg =[]
 k=0
 for specie in species:
     if properties[specie]['input_mode'] == 'concentration':
         plt.plot(f.timebounds, f.forcing.loc[dict(scenario='ssp245', config='4520', specie=specie)], color='navy')
         ghg_forcing[:,k] = f.forcing.loc[dict(scenario='ssp245', config='4520', specie=specie)]
+        label_col_ghg.append(specie)
         k+=1
     elif properties[specie]['input_mode'] == 'forcing':
         plt.plot(f.timebounds, f.forcing.loc[dict(scenario='ssp245', config='4520', specie=specie)], color='mediumorchid')
@@ -144,15 +145,31 @@ plt.show()
 
 
 
-save_ghg = pd.DataFrame(ghg_forcing).to_csv('./fair_outputs/CMIP6_forcing_ghgs.csv', index=None)
-save_aerosol = pd.DataFrame(aerosol_forcing).to_csv('./fair_outputs/CMIP6_forcing_aerosols.csv', index=None)
+save_ghg = pd.DataFrame(ghg_forcing, columns=label_col_ghg).to_csv('./fair_outputs/CMIP6_forcing_ghgs.csv', index=None)
+save_aerosol = pd.DataFrame(aerosol_forcing, columns=['Aerosol-radiation interactions', 'Aerosol-cloud interactions']).to_csv('./fair_outputs/CMIP6_forcing_aerosols.csv', index=None)
 
-save_other_anthro = pd.DataFrame(other_anthro_forcing).to_csv('./fair_outputs/CMIP6_forcing_other_anthropogenic.csv', index=None)
-save_natural = pd.DataFrame(natural_forcing).to_csv('./fair_outputs/CMIP6_forcing_natural.csv', index=None)
-
-
+save_other_anthro = pd.DataFrame(other_anthro_forcing, columns=['Ozone', 'Land Use']).to_csv('./fair_outputs/CMIP6_forcing_other_anthropogenic.csv', index=None)
+save_natural = pd.DataFrame(natural_forcing, columns=['Solar', 'Volcanic']).to_csv('./fair_outputs/CMIP6_forcing_natural.csv', index=None)
 
 
 
 
+# plt.figure()
+# plt.plot(f.timebounds, f.temperature.loc[dict(scenario='ssp245', layer=0)], color='0.5')
+# plt.plot(f.timebounds, np.mean(np.array(f.temperature.loc[dict(scenario='ssp245', layer=0)]), axis=1), color='k', lw=2.5, label='CMIP6')
+# plt.plot(cmip5_time, cmip5_temperature, color = 'red', lw=2.5, label='CMIP5')
+# plt.plot(cmip7_time, cmip7_temperature, color = 'gold', lw=2.5, label='CMIP7')
+# plt.legend()
+# plt.xlabel('time, years')
+# plt.ylabel('temperature')
+# plt.show()
+
+# plt.figure()
+# plt.plot(f.timebounds, f.forcing_sum.loc[dict(scenario='ssp245', config='4520')], color='k', label='Sum forcing CMIP6')
+# plt.plot(cmip5_time, cmip5_forcing_sum, color = 'red', lw=2.5, label='CMIP5')
+# plt.plot(cmip7_time, cmip7_forcing_sum, color = 'gold', lw=2.5, label='CMIP7')
+# plt.legend()
+# plt.xlabel('time, years')
+# plt.ylabel('total forcing')
+# plt.show()
 
